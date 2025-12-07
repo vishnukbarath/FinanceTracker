@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
-import { View, Text, ScrollView, StyleSheet, Dimensions } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
-import { PieChart } from 'react-native-chart-kit';
 import { TransactionContext } from '../contexts/TransactionContext';
 
 export default function DashboardScreen() {
@@ -10,23 +9,6 @@ export default function DashboardScreen() {
   const totalIncome = getTotalIncome();
   const totalExpenses = getTotalExpenses();
   const balance = totalIncome - totalExpenses;
-
-  const categoryData = transactions
-    .filter(t => t.type === 'expense')
-    .reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + t.amount;
-      return acc;
-    }, {} as Record<string, number>);
-
-  const chartData = Object.entries(categoryData).map(([name, amount], index) => ({
-    name,
-    population: amount,
-    color: `hsl(${index * 60}, 70%, 50%)`,
-    legendFontColor: '#7F7F7F',
-    legendFontSize: 12
-  }));
-
-  const screenWidth = Dimensions.get('window').width;
 
   return (
     <ScrollView style={styles.container}>
@@ -53,32 +35,12 @@ export default function DashboardScreen() {
         </Card>
       </View>
 
-      {chartData.length > 0 ? (
-        <Card style={styles.card}>
-          <Card.Content>
-            <Title>Expense Breakdown</Title>
-            <PieChart
-              data={chartData}
-              width={screenWidth - 60}
-              height={220}
-              chartConfig={{
-                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              }}
-              accessor="population"
-              backgroundColor="transparent"
-              paddingLeft="15"
-              absolute
-            />
-          </Card.Content>
-        </Card>
-      ) : (
-        <Card style={styles.card}>
-          <Card.Content>
-            <Title>No Expenses Yet</Title>
-            <Paragraph>Add your first transaction to see the breakdown</Paragraph>
-          </Card.Content>
-        </Card>
-      )}
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title>Recent Transactions</Title>
+          <Paragraph>Total: {transactions.length} transactions</Paragraph>
+        </Card.Content>
+      </Card>
     </ScrollView>
   );
 }
