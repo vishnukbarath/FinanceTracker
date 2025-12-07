@@ -6,6 +6,7 @@ interface TransactionContextType {
   transactions: Transaction[];
   addTransaction: (transaction: Omit<Transaction, 'id'>) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
+  updateTransaction: (id: string, transaction: Omit<Transaction, 'id'>) => Promise<void>;
   getTransactionsByDateRange: (startDate: string, endDate: string) => Transaction[];
   getTotalIncome: () => number;
   getTotalExpenses: () => number;
@@ -53,6 +54,13 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     await saveTransactions(updated);
   };
 
+  const updateTransaction = async (id: string, updatedData: Omit<Transaction, 'id'>) => {
+    const updated = transactions.map(t => 
+      t.id === id ? { ...updatedData, id } : t
+    );
+    await saveTransactions(updated);
+  };
+
   const getTransactionsByDateRange = (startDate: string, endDate: string) => {
     return transactions.filter(t => t.date >= startDate && t.date <= endDate);
   };
@@ -74,6 +82,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       transactions,
       addTransaction,
       deleteTransaction,
+      updateTransaction,
       getTransactionsByDateRange,
       getTotalIncome,
       getTotalExpenses
