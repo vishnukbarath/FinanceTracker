@@ -1,165 +1,425 @@
-Finance Tracker – React Native App
-A simple, offline-first personal finance tracker built with React Native and Expo.
-Track income, expenses, and budgets with a clean UI and persistent local storage.
+💰 Finance Tracker - Personal Finance Management App
+A comprehensive, offline-first personal finance tracker built with React Native and Expo. Track income, expenses, and budgets with real-time insights, visual progress indicators, and a clean, intuitive interface.​
+
+<div align="center">
+![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=badge&logo=expo&logoColor
+
+![AsyncStorage](https://img.shields.io/badge/AsyncStorage-316192?style=for-the-badge&logo=database 📋 Table of Contents
 
 Features
-Add, edit, and delete transactions (income and expenses)
 
-View recent transactions on the home dashboard
-
-Full transaction history with filters (All / Income / Expense)
-
-Budget tracker:
-
-Set weekly or monthly budgets by category
-
-Visual progress bars showing usage
-
-Warnings when near or over budget
-
-Bottom tab navigation:
-
-Home – overview and recent activity
-
-Transactions – full history
-
-Budget – manage category budgets
-
-More – app info and data management
-
-Data stored locally using AsyncStorage (works offline)
+Screenshots
 
 Tech Stack
-React Native (Expo)
 
-TypeScript
+Architecture
 
-Expo Router (tabs + stack navigation)
-
-AsyncStorage for local persistence
-
-Context API for global state (transactions, budgets)
-
-Project Structure (Key Files)
-text
-app/
-  _layout.tsx            // Root navigation (Stack + Providers)
-  add.tsx                // Add transaction screen (modal)
-  edit.tsx               // Edit transaction screen (modal)
-  (tabs)/
-    _layout.tsx          // Bottom tab layout
-    index.tsx            // Home dashboard
-    transactions.tsx     // Transaction history tab
-    budget.tsx           // Budget tab
-    more.tsx             // More/settings tab
-
-src/
-  contexts/
-    TransactionContext.tsx
-    BudgetContext.tsx
-  screens/
-    TransactionHistoryScreen.tsx
-    BudgetScreen.tsx
-  types/
-    index.ts             // Transaction, Budget, etc. interfaces
 Getting Started
-1. Install dependencies
+
+Project Structure
+
+Core Concepts
+
+API Reference
+
+Development
+
+Testing
+
+Deployment
+
+Roadmap
+
+Contributing
+
+License
+
+Author
+
+✨ Features
+Transaction Management
+✅ Add Transactions - Income and expense tracking with categories
+
+✅ Edit Transactions - Modify existing entries
+
+✅ Delete Transactions - Remove unwanted entries with confirmation
+
+✅ Transaction History - Complete list with filtering options
+
+✅ Categories - Food, Travel, Bills, Shopping, Entertainment, Health, Salary, Freelance, Other
+
+✅ Notes - Add optional descriptions to transactions
+
+Budget Tracking​
+💰 Set Budgets - Weekly or monthly limits per category
+
+📊 Visual Progress Bars - Real-time spending visualization
+
+⚠️ Smart Alerts - Warnings when approaching (>80%) or exceeding budget
+
+🔴 Overspending Indicators - Clear visual feedback with color coding
+
+📈 Automatic Calculations - Spent amount auto-updates with new transactions
+
+Dashboard & Analytics
+🏠 Home Overview - Total balance, income, and expenses at a glance
+
+📅 Recent Transactions - Last 5 transactions on home screen
+
+🎯 Budget Alerts - Priority warnings for budget issues
+
+💹 Real-time Calculations - Instant balance updates
+
+User Experience​
+📱 Bottom Tab Navigation - Intuitive 4-tab structure (Home, Transactions, Budget, More)
+
+🎨 Clean UI/UX - Material Design-inspired interface
+
+💾 Offline-First - All data stored locally, works without internet
+
+⚡ Fast Performance - Optimized rendering with React Context
+
+🔒 Data Privacy - All data stays on your device
+
+📱 Screenshots
+text
+[Home Screen]        [Transactions]       [Budget Tracker]     [Add Transaction]
+   Balance Card         Filter Tabs         Progress Bars         Modal Form
+   Income/Expense       Full History        Budget Alerts         Categories
+   Recent Trans.        Edit/Delete         Add Budget            Amount Input
+🛠 Tech Stack
+Category	Technology
+Framework	React Native (Expo)
+Language	TypeScript
+Navigation	Expo Router v3 (File-based routing)
+State Management	React Context API
+Storage	AsyncStorage
+UI Components	React Native Core Components
+Date Handling	JavaScript Date API
+Development	Expo CLI, Metro Bundler
+🏗 Architecture
+Design Patterns
+Context + Provider Pattern - Global state management for transactions and budgets
+
+Component Composition - Reusable UI components
+
+Screen-Based Architecture - Separation of concerns between screens and business logic
+
+Async Storage Layer - Persistent data with AsyncStorage
+
+Data Flow
+text
+User Action → Screen Component → Context (Business Logic) → AsyncStorage
+                ↓                      ↓                          ↓
+              UI Update ← State Update ← Data Persisted
+Context Architecture​
+text
+TransactionContext
+├── State: transactions[]
+├── Actions: add, update, delete
+├── Helpers: getTotalIncome, getTotalExpenses
+└── Storage: AsyncStorage persistence
+
+BudgetContext
+├── State: budgets[]
+├── Actions: add, update, delete
+├── Helpers: calculateSpent, getBudgetByCategory
+└── Storage: AsyncStorage persistence
+🚀 Getting Started
+Prerequisites
+Node.js (v16 or higher)
+
+npm or yarn
+
+Expo CLI (npm install -g expo-cli)
+
+Android Studio (for Android) or Xcode (for iOS)
+
+Installation
+Clone the repository
+
+bash
+git clone https://github.com/yourusername/finance-tracker.git
+cd finance-tracker
+Install dependencies
+
 bash
 npm install
 # or
 yarn install
-2. Run the app
+Install required Expo packages
+
+bash
+npx expo install @react-native-async-storage/async-storage
+npx expo install @react-navigation/bottom-tabs
+Start the development server
+
 bash
 npx expo start
-Then press:
+Run on device/emulator
 
-a for Android emulator/device
+Press a for Android
 
-i for iOS simulator (macOS)
+Press i for iOS (macOS only)
 
-w for web (if needed)
+Press w for web
 
-If you see stale data or weird state, try:
+Scan QR code with Expo Go app
 
+Clear Cache (if needed)
 bash
 npx expo start -c
-Core Concepts
-Transactions
-Each transaction has:
+📁 Project Structure
+text
+finance-tracker/
+│
+├── app/                          # Expo Router navigation
+│   ├── _layout.tsx              # Root layout with providers
+│   ├── add.tsx                  # Add transaction modal
+│   ├── edit.tsx                 # Edit transaction modal
+│   │
+│   └── (tabs)/                  # Bottom tab navigation
+│       ├── _layout.tsx          # Tab layout configuration
+│       ├── index.tsx            # Home screen (Dashboard)
+│       ├── transactions.tsx     # Transaction history tab
+│       ├── budget.tsx           # Budget tracker tab
+│       └── more.tsx             # Settings/More tab
+│
+├── src/
+│   ├── contexts/                # Global state management
+│   │   ├── TransactionContext.tsx
+│   │   └── BudgetContext.tsx
+│   │
+│   ├── screens/                 # Screen components
+│   │   ├── TransactionHistoryScreen.tsx
+│   │   ├── BudgetScreen.tsx
+│   │   ├── AddTransactionScreen.tsx
+│   │   └── EditTransactionScreen.tsx
+│   │
+│   ├── types/                   # TypeScript interfaces
+│   │   └── index.ts
+│   │
+│   └── utils/                   # Helper functions (future)
+│       └── dateHelpers.ts
+│
+├── assets/                      # Images, fonts, etc.
+├── package.json
+├── tsconfig.json
+├── app.json                     # Expo configuration
+└── README.md
+🧠 Core Concepts
+1. Transaction Model
+typescript
+interface Transaction {
+  id: string;                    // Unique identifier (timestamp)
+  type: 'income' | 'expense';    // Transaction type
+  amount: number;                // Transaction amount (₹)
+  category: string;              // Category name
+  description: string;           // Brief description
+  date: string;                  // ISO date string
+  notes?: string;                // Optional additional notes
+}
+Example:
 
-id: string
+json
+{
+  "id": "1733717200000",
+  "type": "expense",
+  "amount": 250.50,
+  "category": "Food",
+  "description": "Lunch at restaurant",
+  "date": "2025-12-09",
+  "notes": "With friends"
+}
+2. Budget Model
+typescript
+interface Budget {
+  id: string;                    // Unique identifier
+  category: string;              // Category to budget
+  amount: number;                // Budget limit (₹)
+  period: 'weekly' | 'monthly';  // Time period
+  spent: number;                 // Auto-calculated spent amount
+}
+Budget Calculation Logic:
 
-type: 'income' | 'expense'
+Weekly: Checks transactions from last 7 days
 
-amount: number
+Monthly: Checks transactions from last 30 days
 
-category: string (e.g., Food, Travel)
+Auto-updates: Recalculates on every transaction change
 
-description: string
+Color Coding:
 
-date: string (ISO or formatted)
+🟢 Green (0-80%): On track
 
-notes?: optional string
+🟠 Orange (80-100%): Approaching limit
 
-Transactions are managed by TransactionContext and persisted in AsyncStorage under the key transactions.
+🔴 Red (>100%): Over budget
 
-Budgets
-Each budget has:
+3. Data Persistence
+AsyncStorage Keys:
 
-id: string
+transactions - Array of Transaction objects
 
-category: string (expense category)
+budgets - Array of Budget objects
 
-amount: number (budget limit)
+Storage Operations:
 
-period: 'weekly' | 'monthly'
+typescript
+// Save
+await AsyncStorage.setItem('transactions', JSON.stringify(transactions));
 
-spent: number (computed based on transactions)
+// Load
+const stored = await AsyncStorage.getItem('transactions');
+const parsed = stored ? JSON.parse(stored) : [];
 
-Budgets are managed by BudgetContext and stored under the key budgets.
-The app recalculates spent based on current transactions in the selected time window.
+// Clear (More screen)
+await AsyncStorage.removeItem('transactions');
+await AsyncStorage.removeItem('budgets');
+📚 API Reference
+TransactionContext
+typescript
+const {
+  transactions,           // Transaction[]
+  addTransaction,         // (transaction: Omit<Transaction, 'id'>) => Promise<void>
+  deleteTransaction,      // (id: string) => Promise<void>
+  updateTransaction,      // (id: string, data: Omit<Transaction, 'id'>) => Promise<void>
+  getTotalIncome,         // () => number
+  getTotalExpenses,       // () => number
+  getTransactionsByDateRange  // (start: string, end: string) => Transaction[]
+} = useContext(TransactionContext);
+BudgetContext
+typescript
+const {
+  budgets,                // Budget[]
+  addBudget,              // (budget: Omit<Budget, 'id' | 'spent'>) => Promise<void>
+  deleteBudget,           // (id: string) => Promise<void>
+  updateBudget,           // (id: string, data: Omit<Budget, 'id' | 'spent'>) => Promise<void>
+  getBudgetByCategory,    // (category: string) => Budget | undefined
+  calculateSpent          // (category: string, period: 'weekly' | 'monthly') => number
+} = useContext(BudgetContext);
+💻 Development
+Available Scripts
+bash
+# Start development server
+npm start
 
-Navigation
-Root Stack
+# Start with cache cleared
+npm start -- -c
 
-(tabs) – main app with bottom tabs
+# Run on Android
+npm run android
 
-add – Add transaction (modal)
+# Run on iOS
+npm run ios
 
-edit – Edit transaction (modal)
+# Run on web
+npm run web
 
-Bottom Tabs
+# Build for production
+eas build --platform android
+eas build --platform ios
+Code Style​
+TypeScript for type safety
 
-Home – summary, recent transactions, budget alerts
+Functional components with hooks
 
-Transactions – full history with filters and edit/delete
+Async/await for asynchronous operations
 
-Budget – create/manage budgets with progress bars
+StyleSheet.create for component styling
 
-More – app info and “Clear All Data”
+Context API for state management
 
-Data Persistence
-The app uses AsyncStorage to save:
+Best Practices Followed​
+✅ Separation of concerns (screens vs. contexts)
+✅ Type safety with TypeScript interfaces
+✅ Error handling in async operations
+✅ Input validation before saving
+✅ Confirmation dialogs for destructive actions
+✅ Loading states for async operations
+✅ Responsive design with percentage-based widths
 
-transactions – array of Transaction objects
+🧪 Testing
+Manual Testing Checklist
+Transactions:
 
-budgets – array of Budget objects
+ Add income transaction
 
-Data is loaded on app start inside each context’s useEffect.
-Contexts expose helper functions like getTotalIncome, getTotalExpenses, and calculateSpent.
+ Add expense transaction
 
-Customization Ideas
-Add charts (e.g., category-wise expense pie chart)
+ Edit existing transaction
 
-Add authentication and sync with backend
+ Delete transaction with confirmation
 
-Export data to CSV
+ Filter transactions (All/Income/Expense)
 
-Add dark mode
+ Verify balance calculations
 
-Support multiple currencies and localization
+Budgets:
 
-Notes
-This app is designed as an offline-first personal tracker.
+ Create weekly budget
 
-All logic is in contexts and screens; UI/components can be refactored further into reusable components as the project grows.
+ Create monthly budget
+
+ Delete budget
+
+ Verify spent calculation
+
+ Check color-coded progress bars
+
+ Verify budget alerts on home screen
+
+Data Persistence:
+
+ Close and reopen app
+
+ Verify transactions persist
+
+ Verify budgets persist
+
+ Test "Clear All Data"
+
+📦 Deployment
+Build for Production
+bash
+# Install EAS CLI
+npm install -g eas-cli
+
+# Login to Expo
+eas login
+
+# Configure project
+eas build:configure
+
+# Build APK (Android)
+eas build --platform android --profile preview
+
+# Build AAB (for Play Store)
+eas build --platform android --profile production
+
+# Build IPA (iOS - requires Apple Developer account)
+eas build --platform ios --profile production
+Environment Configuration
+Create app.json with proper configuration:
+
+json
+{
+  "expo": {
+    "name": "Finance Tracker",
+    "slug": "finance-tracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#6200ee"
+    },
+    "android": {
+      "package": "com.yourcompany.financetracker"
+    },
+    "ios": {
+      "bundleIdentifier": "com.yourcompany.financetracker"
+    }
+  }
+}
