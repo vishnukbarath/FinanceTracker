@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { TransactionProvider } from '../src/contexts/TransactionProvider';
+import { TransactionProvider } from '../src/contexts/TransactionContext';
 
 export default function RootLayout() {
   return (
