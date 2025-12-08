@@ -9,6 +9,15 @@ export default function TransactionHistoryScreen() {
   const router = useRouter();
   const [filter, setFilter] = useState<'all' | 'income' | 'expense'>('all');
 
+  // Safety check - return loading if transactions not ready
+  if (!transactions) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.emptyText}>Loading...</Text>
+      </View>
+    );
+  }
+
   const filteredTransactions = transactions.filter(t => 
     filter === 'all' ? true : t.type === filter
   ).reverse(); // Show newest first

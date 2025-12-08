@@ -12,6 +12,17 @@ export default function BudgetScreen() {
   const [amount, setAmount] = useState('');
   const [period, setPeriod] = useState<'weekly' | 'monthly'>('monthly');
 
+  // Safety check - if budgets is undefined or null
+  if (!budgets) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Loading...</Text>
+        </View>
+      </View>
+    );
+  }
+
   const handleAddBudget = async () => {
     if (!amount || parseFloat(amount) <= 0) {
       Alert.alert('Error', 'Please enter a valid budget amount');

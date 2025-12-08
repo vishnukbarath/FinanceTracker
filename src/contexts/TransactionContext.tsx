@@ -12,7 +12,15 @@ interface TransactionContextType {
   getTotalExpenses: () => number;
 }
 
-export const TransactionContext = createContext<TransactionContextType>({} as TransactionContextType);
+export const TransactionContext = createContext<TransactionContextType>({
+  transactions: [],
+  addTransaction: async () => {},
+  deleteTransaction: async () => {},
+  updateTransaction: async () => {},
+  getTransactionsByDateRange: () => [],
+  getTotalIncome: () => 0,
+  getTotalExpenses: () => 0,
+});
 
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
