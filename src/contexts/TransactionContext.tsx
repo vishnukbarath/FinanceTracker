@@ -31,9 +31,15 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
 
   const loadTransactions = async () => {
     try {
+      console.log('DEBUG: Loading transactions from storage...');
       const stored = await AsyncStorage.getItem('transactions');
+      console.log('DEBUG: Stored data:', stored);
       if (stored) {
-        setTransactions(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        console.log('DEBUG: Parsed transactions:', parsed);
+        setTransactions(parsed);
+      } else {
+        console.log('DEBUG: No stored transactions found');
       }
     } catch (error) {
       console.error('Error loading transactions:', error);
@@ -42,8 +48,11 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
 
   const saveTransactions = async (newTransactions: Transaction[]) => {
     try {
+      console.log('DEBUG: Saving transactions:', newTransactions);
       await AsyncStorage.setItem('transactions', JSON.stringify(newTransactions));
+      console.log('DEBUG: Transactions saved to storage');
       setTransactions(newTransactions);
+      console.log('DEBUG: State updated with new transactions');
     } catch (error) {
       console.error('Error saving transactions:', error);
     }
@@ -54,18 +63,27 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       ...transaction,
       id: Date.now().toString()
     };
-    await saveTransactions([...transactions, newTransaction]);
+    console.log('DEBUG: Adding new transaction:', newTransaction);
+    console.log('DEBUG: Current transactions before add:', transactions);
+    const updated = [...transactions, newTransaction];
+    console.log('DEBUG: Updated transactions array:', updated);
+    await saveTransactions(updated);
   };
 
   const deleteTransaction = async (id: string) => {
+    console.log('DEBUG: Deleting transaction with id:', id);
     const updated = transactions.filter(t => t.id !== id);
+    console.log('DEBUG: Transactions after delete:', updated);
     await saveTransactions(updated);
   };
 
   const updateTransaction = async (id: string, updatedData: Omit<Transaction, 'id'>) => {
+    console.log('DEBUG: Updating transaction with id:', id);
+    console.log('DEBUG: Updated data:', updatedData);
     const updated = transactions.map(t => 
       t.id === id ? { ...updatedData, id } : t
     );
+    console.log('DEBUG: Transactions after update:', updated);
     await saveTransactions(updated);
   };
 
@@ -74,16 +92,20 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getTotalIncome = () => {
-    return transactions
+    const total = transactions
       .filter(t => t.type === 'income')
       .reduce((sum, t) => sum + t.amount, 0);
+    return total;
   };
 
   const getTotalExpenses = () => {
-    return transactions
+    const total = transactions
       .filter(t => t.type === 'expense')
       .reduce((sum, t) => sum + t.amount, 0);
+    return total;
   };
+
+  console.log('DEBUG: TransactionProvider rendering, current transactions:', transactions);
 
   return (
     <TransactionContext.Provider value={{
