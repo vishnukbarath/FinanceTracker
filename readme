@@ -1,0 +1,165 @@
+Finance Tracker – React Native App
+A simple, offline-first personal finance tracker built with React Native and Expo.
+Track income, expenses, and budgets with a clean UI and persistent local storage.
+
+Features
+Add, edit, and delete transactions (income and expenses)
+
+View recent transactions on the home dashboard
+
+Full transaction history with filters (All / Income / Expense)
+
+Budget tracker:
+
+Set weekly or monthly budgets by category
+
+Visual progress bars showing usage
+
+Warnings when near or over budget
+
+Bottom tab navigation:
+
+Home – overview and recent activity
+
+Transactions – full history
+
+Budget – manage category budgets
+
+More – app info and data management
+
+Data stored locally using AsyncStorage (works offline)
+
+Tech Stack
+React Native (Expo)
+
+TypeScript
+
+Expo Router (tabs + stack navigation)
+
+AsyncStorage for local persistence
+
+Context API for global state (transactions, budgets)
+
+Project Structure (Key Files)
+text
+app/
+  _layout.tsx            // Root navigation (Stack + Providers)
+  add.tsx                // Add transaction screen (modal)
+  edit.tsx               // Edit transaction screen (modal)
+  (tabs)/
+    _layout.tsx          // Bottom tab layout
+    index.tsx            // Home dashboard
+    transactions.tsx     // Transaction history tab
+    budget.tsx           // Budget tab
+    more.tsx             // More/settings tab
+
+src/
+  contexts/
+    TransactionContext.tsx
+    BudgetContext.tsx
+  screens/
+    TransactionHistoryScreen.tsx
+    BudgetScreen.tsx
+  types/
+    index.ts             // Transaction, Budget, etc. interfaces
+Getting Started
+1. Install dependencies
+bash
+npm install
+# or
+yarn install
+2. Run the app
+bash
+npx expo start
+Then press:
+
+a for Android emulator/device
+
+i for iOS simulator (macOS)
+
+w for web (if needed)
+
+If you see stale data or weird state, try:
+
+bash
+npx expo start -c
+Core Concepts
+Transactions
+Each transaction has:
+
+id: string
+
+type: 'income' | 'expense'
+
+amount: number
+
+category: string (e.g., Food, Travel)
+
+description: string
+
+date: string (ISO or formatted)
+
+notes?: optional string
+
+Transactions are managed by TransactionContext and persisted in AsyncStorage under the key transactions.
+
+Budgets
+Each budget has:
+
+id: string
+
+category: string (expense category)
+
+amount: number (budget limit)
+
+period: 'weekly' | 'monthly'
+
+spent: number (computed based on transactions)
+
+Budgets are managed by BudgetContext and stored under the key budgets.
+The app recalculates spent based on current transactions in the selected time window.
+
+Navigation
+Root Stack
+
+(tabs) – main app with bottom tabs
+
+add – Add transaction (modal)
+
+edit – Edit transaction (modal)
+
+Bottom Tabs
+
+Home – summary, recent transactions, budget alerts
+
+Transactions – full history with filters and edit/delete
+
+Budget – create/manage budgets with progress bars
+
+More – app info and “Clear All Data”
+
+Data Persistence
+The app uses AsyncStorage to save:
+
+transactions – array of Transaction objects
+
+budgets – array of Budget objects
+
+Data is loaded on app start inside each context’s useEffect.
+Contexts expose helper functions like getTotalIncome, getTotalExpenses, and calculateSpent.
+
+Customization Ideas
+Add charts (e.g., category-wise expense pie chart)
+
+Add authentication and sync with backend
+
+Export data to CSV
+
+Add dark mode
+
+Support multiple currencies and localization
+
+Notes
+This app is designed as an offline-first personal tracker.
+
+All logic is in contexts and screens; UI/components can be refactored further into reusable components as the project grows.
