@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { TransactionProvider } from '../src/contexts/TransactionContext';
+import { TransactionProvider } from '../src/contexts/TransactionProvider';
 
 export default function RootLayout() {
   return (
@@ -10,6 +10,8 @@ export default function RootLayout() {
       }}>
         <Stack.Screen name="index" options={{ title: 'Finance Tracker' }} />
         <Stack.Screen name="add" options={{ title: 'Add Transaction' }} />
+        <Stack.Screen name="history" options={{ title: 'Transaction History' }} />
+        <Stack.Screen name="edit" options={{ title: 'Edit Transaction' }} />
       </Stack>
     </TransactionProvider>
   );
