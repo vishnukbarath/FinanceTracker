@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
 import { TransactionContext } from '../contexts/TransactionContext';
 import { Transaction } from '../types';
 
 export default function TransactionHistoryScreen() {
   const { transactions, deleteTransaction } = useContext(TransactionContext);
+  const router = useRouter();
   const [filter, setFilter] = useState<'all' | 'income' | 'expense'>('all');
 
   const filteredTransactions = transactions.filter(t => 
@@ -27,7 +29,11 @@ export default function TransactionHistoryScreen() {
   };
 
   const renderTransaction = (transaction: Transaction) => (
-    <View key={transaction.id} style={styles.transactionCard}>
+    <TouchableOpacity 
+      key={transaction.id} 
+      style={styles.transactionCard}
+      onPress={() => router.push(`/edit?id=${transaction.id}`)}
+    >
       <View style={styles.transactionMain}>
         <View style={styles.transactionInfo}>
           <Text style={styles.description}>{transaction.description}</Text>
@@ -46,13 +52,16 @@ export default function TransactionHistoryScreen() {
           </Text>
           <TouchableOpacity
             style={styles.deleteButton}
-            onPress={() => handleDelete(transaction.id, transaction.description)}
+            onPress={(e) => {
+              e.stopPropagation();
+              handleDelete(transaction.id, transaction.description);
+            }}
           >
             <Text style={styles.deleteButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (

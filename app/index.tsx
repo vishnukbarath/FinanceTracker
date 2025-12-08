@@ -20,6 +20,14 @@ export default function Index() {
           <Text style={styles.balance}>₹{balance.toFixed(2)}</Text>
         </View>
 
+        {/* History Button - NEW */}
+        <TouchableOpacity 
+          style={styles.historyButton}
+          onPress={() => router.push('/history')}
+        >
+          <Text style={styles.historyButtonText}>View All Transactions →</Text>
+        </TouchableOpacity>
+
         {/* Income and Expense Cards */}
         <View style={styles.row}>
           <View style={[styles.card, styles.halfCard]}>
@@ -84,6 +92,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3
+  },
+  historyButton: {
+    backgroundColor: '#6200ee',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginBottom: 16,
+    alignItems: 'center'
+  },
+  historyButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600'
   },
   row: {
     flexDirection: 'row',
