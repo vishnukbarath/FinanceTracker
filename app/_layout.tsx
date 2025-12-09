@@ -6,6 +6,7 @@ import { AppProviders } from './providers';
 
 export default function TabLayout() {
   return (
+    
     <AppProviders>
       <Tabs
         screenOptions={{
@@ -29,39 +30,33 @@ export default function TabLayout() {
           }
         }}
       >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Home',
-            tabBarLabel: 'Home',
-            tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🏠</Text>,
-            headerTitle: 'Finance Tracker',
-          }}
-        />
-        <Tabs.Screen
-          name="transactions"
-          options={{
-          title: 'Transactions',
-          tabBarLabel: 'Transactions',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📊</Text>,
-        }}
-      />
-      <Tabs.Screen
-        name="budget"
-        options={{
-          title: 'Budgets',
-          tabBarLabel: 'Budget',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>💰</Text>,
-        }}
-      />
-      <Tabs.Screen
-        name="more"
-        options={{
-          title: 'More',
-          tabBarLabel: 'More',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>⚙️</Text>,
-        }}
-      />
+          <Tabs.Screen
+            name="transactions"
+            options={{
+              title: 'Transactions',
+              tabBarLabel: 'Transactions',
+              tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>📊</Text>,
+            }}
+          />
+
+          <Tabs.Screen
+            name="index"
+            options={{
+              title: 'Home',
+              tabBarLabel: 'Home',
+              tabBarIcon: ({ color }) => <Text style={{ fontSize: 28 }}>🏠</Text>,
+              headerTitle: 'Finance Tracker',
+            }}
+          />
+
+          <Tabs.Screen
+            name="budget"
+            options={{
+              title: 'Budgets',
+              tabBarLabel: 'Budget',
+              tabBarIcon: ({ color }) => <Text style={{ fontSize: 22 }}>💰</Text>,
+            }}
+          />
     </Tabs>
     </AppProviders>
   );
