@@ -1,197 +1,265 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useContext, useCallback, useMemo } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { TransactionContext } from '../src/contexts/TransactionContext';
 
-const CATEGORIES = {
+type TransactionType = 'income' | 'expense';
+
+const CATEGORIES: Record<TransactionType, string[]> = {
   expense: ['Food', 'Travel', 'Bills', 'Shopping', 'Entertainment', 'Health', 'Other'],
   income: ['Salary', 'Business', 'Investment', 'Freelance', 'Other']
 };
 
 export default function AddTransactionScreen() {
-  const [type, setType] = useState<'income' | 'expense'>('expense');
+  const router = useRouter();
+  const { addTransaction } = useContext(TransactionContext);
+
+  const [type, setType] = useState<TransactionType>('expense');
   const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('Food');
+  const [category, setCategory] = useState(CATEGORIES.expense[0]);
   const [description, setDescription] = useState('');
   const [notes, setNotes] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(() =>
+    new Date().toISOString().split('T')[0]
+  );
 
-  const { addTransaction } = useContext(TransactionContext);
-  const router = useRouter();
+  /** -------- Derived Values -------- */
+  const parsedAmount = useMemo(() => Number(amount), [amount]);
+  const categories = useMemo(() => CATEGORIES[type], [type]);
 
-  const handleTypeChange = (newType: 'income' | 'expense') => {
+  /** -------- Handlers -------- */
+  const handleTypeChange = useCallback((newType: TransactionType) => {
     setType(newType);
     setCategory(CATEGORIES[newType][0]);
-  };
+  }, []);
 
-  const handleSubmit = async () => {
-    if (!amount || parseFloat(amount) <= 0) {
-      Alert.alert('Error', 'Please enter a valid amount');
-      return;
+  const handleAmountChange = useCallback((value: string) => {
+    // Allow only numbers and decimals
+    const sanitized = value.replace(/[^0-9.]/g, '');
+    setAmount(sanitized);
+  }, []);
+
+  const validateForm = (): boolean => {
+    if (!parsedAmount || parsedAmount <= 0) {
+      Alert.alert('Invalid Amount', 'Amount must be greater than zero.');
+      return false;
     }
 
     if (!description.trim()) {
-      Alert.alert('Error', 'Please enter a description');
-      return;
+      Alert.alert('Missing Description', 'Description is required.');
+      return false;
     }
 
-    await addTransaction({
-      type,
-      amount: parseFloat(amount),
-      category,
-      description,
-      date,
-      notes
-    });
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      Alert.alert('Invalid Date', 'Use YYYY-MM-DD format.');
+      return false;
+    }
 
-    Alert.alert('Success', 'Transaction added successfully!');
-    router.back();
+    return true;
   };
 
+  const handleSubmit = useCallback(async () => {
+    if (!validateForm()) return;
+
+    try {
+      await addTransaction({
+        type,
+        amount: parsedAmount,
+        category,
+        description: description.trim(),
+        notes: notes.trim(),
+        date
+      });
+
+      Alert.alert('Success', 'Transaction added.');
+      router.back();
+    } catch (err) {
+      Alert.alert('Error', 'Failed to add transaction.');
+    }
+  }, [
+    type,
+    parsedAmount,
+    category,
+    description,
+    notes,
+    date,
+    addTransaction,
+    router
+  ]);
+
+  /** -------- Render -------- */
   return (
-    <ScrollView style={styles.container}>
-      {/* Type Selector */}
-      <View style={styles.typeContainer}>
-        <TouchableOpacity
-          style={[styles.typeButton, type === 'expense' && styles.typeButtonActive]}
-          onPress={() => handleTypeChange('expense')}
-        >
-          <Text style={[styles.typeText, type === 'expense' && styles.typeTextActive]}>
-            Expense
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.typeButton, type === 'income' && styles.typeButtonActive]}
-          onPress={() => handleTypeChange('income')}
-        >
-          <Text style={[styles.typeText, type === 'income' && styles.typeTextActive]}>
-            Income
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Amount Input */}
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Amount (₹)</Text>
-        <TextInput
-          style={styles.input}
-          value={amount}
-          onChangeText={setAmount}
-          keyboardType="decimal-pad"
-          placeholder="0.00"
-          placeholderTextColor="#999"
-        />
-      </View>
-
-      {/* Category Selector */}
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Category</Text>
-        <View style={styles.categoryContainer}>
-          {CATEGORIES[type].map((cat) => (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        {/* Type Selector */}
+        <View style={styles.typeContainer}>
+          {(['expense', 'income'] as TransactionType[]).map(t => (
             <TouchableOpacity
-              key={cat}
+              key={t}
               style={[
-                styles.categoryButton,
-                category === cat && styles.categoryButtonActive
+                styles.typeButton,
+                type === t && styles.typeButtonActive
               ]}
-              onPress={() => setCategory(cat)}
+              onPress={() => handleTypeChange(t)}
             >
-              <Text style={[
-                styles.categoryText,
-                category === cat && styles.categoryTextActive
-              ]}>
-                {cat}
+              <Text
+                style={[
+                  styles.typeText,
+                  type === t && styles.typeTextActive
+                ]}
+              >
+                {t.toUpperCase()}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
-      </View>
 
-      {/* Description Input */}
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Description</Text>
-        <TextInput
-          style={styles.input}
+        {/* Amount */}
+        <Input
+          label="Amount (₹)"
+          value={amount}
+          onChangeText={handleAmountChange}
+          keyboardType="decimal-pad"
+          placeholder="0.00"
+        />
+
+        {/* Category */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Category</Text>
+          <View style={styles.categoryContainer}>
+            {categories.map(cat => (
+              <TouchableOpacity
+                key={cat}
+                style={[
+                  styles.categoryButton,
+                  category === cat && styles.categoryButtonActive
+                ]}
+                onPress={() => setCategory(cat)}
+              >
+                <Text
+                  style={[
+                    styles.categoryText,
+                    category === cat && styles.categoryTextActive
+                  ]}
+                >
+                  {cat}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* Description */}
+        <Input
+          label="Description"
           value={description}
           onChangeText={setDescription}
           placeholder="e.g., Grocery shopping"
-          placeholderTextColor="#999"
         />
-      </View>
 
-      {/* Date Input */}
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Date (YYYY-MM-DD)</Text>
-        <TextInput
-          style={styles.input}
+        {/* Date */}
+        <Input
+          label="Date (YYYY-MM-DD)"
           value={date}
           onChangeText={setDate}
           placeholder="2025-12-08"
-          placeholderTextColor="#999"
         />
-      </View>
 
-      {/* Notes Input */}
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Notes (Optional)</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
+        {/* Notes */}
+        <Input
+          label="Notes (Optional)"
           value={notes}
           onChangeText={setNotes}
           placeholder="Additional notes..."
-          placeholderTextColor="#999"
           multiline
           numberOfLines={3}
+          style={styles.textArea}
         />
-      </View>
 
-      {/* Submit Button */}
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Add Transaction</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        {/* Submit */}
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>Add Transaction</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
+/** -------- Reusable Input Component -------- */
+function Input({
+  label,
+  style,
+  ...props
+}: {
+  label: string;
+  style?: any;
+} & React.ComponentProps<typeof TextInput>) {
+  return (
+    <View style={styles.inputGroup}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        {...props}
+        style={[styles.input, style]}
+        placeholderTextColor="#999"
+      />
+    </View>
+  );
+}
+
+/** -------- Styles -------- */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
     padding: 16
   },
+
   typeContainer: {
     flexDirection: 'row',
     marginBottom: 24,
-    borderRadius: 8,
-    overflow: 'hidden',
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ddd'
+    borderColor: '#ddd',
+    overflow: 'hidden'
   },
   typeButton: {
     flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    backgroundColor: '#fff'
+    paddingVertical: 14,
+    alignItems: 'center'
   },
   typeButtonActive: {
     backgroundColor: '#6200ee'
   },
   typeText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: '#333'
   },
   typeTextActive: {
     color: '#fff'
   },
+
   inputGroup: {
-    marginBottom: 20
+    marginBottom: 18
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
-    marginBottom: 8
+    marginBottom: 6,
+    color: '#333'
   },
   input: {
     borderWidth: 1,
@@ -202,45 +270,46 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9'
   },
   textArea: {
-    height: 80,
+    height: 90,
     textAlignVertical: 'top'
   },
+
   categoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8
   },
   categoryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 18,
     borderWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#fff'
+    borderColor: '#ddd'
   },
   categoryButtonActive: {
     backgroundColor: '#6200ee',
     borderColor: '#6200ee'
   },
   categoryText: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#333'
   },
   categoryTextActive: {
     color: '#fff',
     fontWeight: '600'
   },
+
   submitButton: {
     backgroundColor: '#6200ee',
     paddingVertical: 16,
-    borderRadius: 8,
+    borderRadius: 10,
     alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 24
+    marginTop: 10,
+    marginBottom: 30
   },
   submitButtonText: {
     color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold'
+    fontSize: 17,
+    fontWeight: '700'
   }
 });
