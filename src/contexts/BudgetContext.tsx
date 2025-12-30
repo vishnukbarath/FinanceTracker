@@ -95,10 +95,11 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-  
+
   const addBudget = async (budget: Omit<Budget, 'id' | 'spent'>) => {
     const newBudget: Budget = {
       ...budget,
+      
       id: Date.now().toString(),
       spent: calculateSpent(budget.category, budget.period)
     };
