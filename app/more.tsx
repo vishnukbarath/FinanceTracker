@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 export default function MoreScreen() {
   const router = useRouter();
 
+  
   const handleClearData = () => {
     Alert.alert(
       'Clear All Data',
