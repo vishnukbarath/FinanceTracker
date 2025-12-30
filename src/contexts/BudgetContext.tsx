@@ -84,7 +84,7 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
     if (budgets.length === 0) return;
     
 
-    
+
     const updated = budgets.map(budget => ({
       ...budget,
       spent: calculateSpent(budget.category, budget.period)
@@ -94,6 +94,8 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
   };
 
 
+
+  
   const addBudget = async (budget: Omit<Budget, 'id' | 'spent'>) => {
     const newBudget: Budget = {
       ...budget,
